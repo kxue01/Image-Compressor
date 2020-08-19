@@ -1,0 +1,45 @@
+Authors:Kenneth Xue (kxue01), Samuel Chan (schan07)
+
+This is the code in C for an execuable that takes a PPM image and compresses the
+image by transforming colorspaces and discarding information not easily seen by 
+the human eye. The program will also decompress a PPM image
+
+Usage: 40image -d [filename]		
+	   40image -c [filename]   
+
+Brief Architecture:
+
+- The following files have been implemented correctly to the best of our 
+  knowledge:
+
+- 40image.c: Client file that manages whether there to compress or decompress
+  as well as giving a file stream to read from.
+- compress40.c: contains the compression and decompression functions;
+  compress will read an image in, and print to stdout a compressed version
+  of the image while decompress will take in the compressed version of binary
+  text and convert it to an image (it will place Pnm_rgbs into an array which
+  will be placed into a Pnm_ppm to write as an image).
+      - Arrays that hold Pnm_rgb and ints (for the compressed/bitpacked values)
+        make use of a2plain.c and A2Methods for allocating, freeing, mapping,
+        and indexing. The array structures holding those values are UArray2s.
+- constants.c: contains constant values for the applicable values being
+  bitpacked, specifically values such as denominators, widths, and lsbs.
+- constants.h: interface for constants that declares extern values.
+- quantvalues.c: Implementation for quantvalues which takes in RGB values
+  and turns them into a, b, c, d, pb, and pr values that will be returned
+  and later bitpacked. This is where the formulae for compressing RGB values
+  are used.
+- quantvalues.h: Interface for quantvalues.
+- bitpack.c:Implementation for bitpack where values are placed and taken out of
+  larger codewords. More specifically, the functions in this implementation
+  can check to see if a value can fit in a certain number of bits, turn
+  a value into a specified number of bits (and place those bits inside a 
+  codeword), and read the bits at certain positions of a codeword (and convert
+  them into a usable integer format). 
+- bitpack.h: Interface for bitpack.
+- unpack.c: Implementation of unpack where a codeword is converted into an
+  array of values, and then those values (corresponding to a, b, c, d, pb,
+  pr) are converted into 4 pixels with rgb values in each (which will later
+  be placed into the array of pixels in a Pnm_ppm).
+- unpack.h: Interface of unpack.
+
